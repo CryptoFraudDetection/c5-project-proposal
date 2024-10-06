@@ -78,7 +78,7 @@ We aim to identify potentially fraudulent cryptocurrency schemes such as ICO exi
 = Data Collection and Preprocessing
 == Data Source(s)
 - To establish a ground truth on which coins are fraudulent we aim to use the list from:\ #link("https://www.comparitech.com/crypto/cryptocurrency-scams/")
-- We will attempt to obtain historical coin data from either #link("www.tradingview.com/") or #link("coinmarketcap.com/"), depending on the ease of accessing or scraping the data. #note[Consider removing this point.]
+- We will attempt to obtain historical coin data from either #link("www.tradingview.com/") or #link("coinmarketcap.com/"), depending on the ease of accessing or scraping the data. #note[Consider removing this point?]
 - For sentiment analysis, we will scrape websites such as Google, X (formerly Twitter), Reddit, and Telegram and save the scraped data in a Elasticsearch (or a comparable solution) database.
 
 == Graph Model Selection & Data Description
@@ -104,10 +104,10 @@ We will use a weighted, directed graph where:
 == Model Selection
 
 === Graph-based
-#note[To be determined.]
+#note[tbd]
 
 === Traditional ML/DL
-#note[To be determined.]
+#note[tbd]
 
 === Baseline Model
 I will use a naive bayes baseline model which simply detects, which words could indicate a scam.
@@ -119,7 +119,7 @@ When possible, we will use local GPUs. If necessary, we could request GPU time f
 Depends on how intense a model is. Preferably, we would use Bayesian Hyperparameter Optimization or Random Search.
 
 == Data split
-#note[To be determined.]
+#note[tbd]
 
 #pagebreak()
 = Evaluation Metrics
