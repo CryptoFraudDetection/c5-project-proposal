@@ -1,14 +1,18 @@
 /* --- SETTINGS --- */
 #import "@preview/rubber-article:0.1.0": *
 #import "@preview/fletcher:0.5.1" as fletcher: diagram, node, edge, shapes
+
+// Setup document
 #show: article.with(lang:"en")
 #set text(font: "PT Sans")
 
+// Define colors
 #let primary-color = rgb("#FDE70E")
 #let secondary-color = rgb("#F1F1EE")
 #let tertiary-color = rgb("#DF305B")
-#let attention-color = rgb("#7f00ff")
+#let note-color = rgb("#7f00ff")
 
+// Setup table style
 #set table(
   align: horizon,
   fill: (x, y) =>
@@ -17,16 +21,20 @@
   gutter: 0pt,  
 )
 
+// Add color to links
 #show link: this => text(this, fill: tertiary-color)
 
+// Function to add a ghost citation
 #let nocite(citation) = {
   place(hide[#citation])
 }
 
-#let attention(this) = {
-  text(attention-color)[\[#this\]]
+// Function to highlight notes
+#let note(this) = {
+  text(note-color)[\[#this\]]
 }
 
+// Function to draw graphs
 #let draw_graph(nodes, edges, positions) = {
   diagram({
     // Loop through each node and place it at the specified position
@@ -79,7 +87,7 @@ We aim to identify potential fraudulent cryptocurrency schemes such as ICO exit 
 = Data Collection and Preprocessing
 == Data Source(s)
 - For having a ground truth on which coins are fraudulent we aim to use the list from: \ #link("https://www.comparitech.com/crypto/cryptocurrency-scams/")
-- We will try to get historical coin data from either #link("www.tradingview.com/") or #link("coinmarketcap.com/"), depending on how easy it is to get or scrape the data. #attention[Maybe drop this point?]
+- We will try to get historical coin data from either #link("www.tradingview.com/") or #link("coinmarketcap.com/"), depending on how easy it is to get or scrape the data. #note[Maybe drop this point?]
 - For sentiment analysis, we will scrape websites like Google, X, Reddit and Telegram and save the scraped data in a ElasticSearch (or comparable) database.
 
 == Graph Model Selection & Data Description
@@ -99,10 +107,10 @@ I will use a weighted, directed graph where:
 )
 #let positions = (
 	(0mm, 0mm),   // "Users"
-	(20mm, 0mm),  // "Websites"
-	(0mm, -30mm), // "Coins"
-	(10mm, -15mm), // "Posts"
-	(20mm, -30mm),  // "Words"
+	(0mm, -10mm),  // "Websites"
+	(50mm, -10mm), // "Coins"
+	(25mm, -5mm), // "Posts"
+	(50mm, 0mm),  // "Words"
 )
 #draw_graph(nodes, edges, positions)
 
@@ -110,10 +118,10 @@ I will use a weighted, directed graph where:
 == Model Selection
 
 === Graph-based
-#attention[No idea atm.]
+#note[No idea atm.]
 
 === Traditional ML/DL
-#attention[No idea atm.]
+#note[No idea atm.]
 
 === Baseline Model
 I will use a naive bayes baseline model which simply detects, which words could indicate a scam.
@@ -125,7 +133,7 @@ As long as possible i will try to use my local GPU. If necessary, i could ask i4
 Depends on how intense a model is. Prefferably I would use Bayesian Hyperparameter Optimization or Random Search.
 
 == Data split
-#attention[No idea atm.]
+#note[No idea atm.]
 
 #pagebreak()
 = Evaluation Metrics
@@ -141,7 +149,7 @@ Depends on the intensity of model training.
 Best case would be applying k-fold cross-validation (likely k=5 or 10).
 
 == Model Comparison
-I will compare the models using the above metrics, with special attention to:
+I will compare the models using the above metrics, with special note to:
 - Graph-based models vs. Traditional ML or DL models
 - All models vs. Baseline
 
