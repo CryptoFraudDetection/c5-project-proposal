@@ -89,14 +89,14 @@ We will use a weighted, directed graph where:
 - Edges between coins and posts represent on which post a coin was mentioned.
 - Edges between posts and words represent which words were used in a post.
 
-#let nodes = ("Users", "Websites", "Coins", "Posts", "Words")
-#let edges = ((0, 3), (1, 3), (3, 2), (3, 4),)
+#let nodes = ("Users", "Websites", "Posts", "Words", "Coins")
+#let edges = ((0, 2), (1, 2), (2, 3), (2, 4),)
 #let positions = (
-  (0mm, 0mm), // "Users"
-  (0mm, -10mm), // "Websites"
-  (50mm, -10mm), // "Coins"
-  (25mm, -5mm), // "Posts"
-  (50mm, 0mm), // "Words"
+  (0mm, 10mm), // "Users"
+  (0mm, 0mm), // "Websites"
+  (25mm, 5mm), // "Posts"
+  (50mm, 10mm), // "Words"
+  (50mm, 0mm), // "Coins"
 )
 #draw_graph(nodes, edges, positions)
 
