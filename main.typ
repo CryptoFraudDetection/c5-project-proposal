@@ -35,11 +35,15 @@
   diagram({
     // Loop through each node and place it at the specified position
     for (i, n) in nodes.enumerate() {
-      node(positions.at(i), n, stroke: 1pt, name: str(i), corner-radius: 10pt, fill: secondary-color)
+      node(positions.at(i), n, stroke: 1pt, name: str(i), corner-radius: 5pt, fill: secondary-color)
     }
     // Draw edges between nodes
     for (from, to) in edges {
-      edge(label(str(from)), label(str(to)), "-|>", stroke: 0.8pt)
+      if from != to { 
+        edge(label(str(from)), label(str(to)), "-|>", stroke: 1pt)
+      } else {
+        edge(label(str(from)), label(str(to)), "--|>", stroke: 1pt, bend: 140deg)
+      }
     }
   })
 }
@@ -72,49 +76,48 @@ The project will be done in collaboration with the "Challenge X" group. Here are
 - The broader goal of the challenge is to evaluate different methods, both graph-based and traditional, and gain insights into which approach is most effective for fraud detection in this context.
 
 == Brief Description of the Fraud Detection Problem
-Our aim is to identify potentially fraudulent cryptocurrency schemes such as ICO exit scams, exchange scams, rug pulls, pump-and-dump schemes, and pre-mined coins. By leveraging historical data and sentiment analysis, we hope to develop methods that can detect suspicious activity and help protect investors from falling prey to fraudulent coins.
+Our aim is to identify potentially fraudulent cryptocurrency schemes, mainly rug pulls and pump-and-dump schemes. By leveraging sentiment analysis, I hope to develop methods that can detect suspicious activity and help protect investors from falling prey to fraudulent coins.
 
 #pagebreak()
 = Data Collection and Preprocessing
 == Data Source(s)
-- To establish ground truth on fraudulent coins, we will use the list from: \ #link("https://www.comparitech.com/crypto/cryptocurrency-scams/")
-- For sentiment analysis, we will scrape data from X (formerly Twitter) and Reddit, and store the data in an Elasticsearch database for further analysis.
+- To establish ground truth on fraudulent coins, I will use the list from: \ #link("https://www.comparitech.com/crypto/cryptocurrency-scams/")
+- For sentiment analysis, I will scrape data from Reddit, and store the data in an Elasticsearch database for further analysis/retrieval.
 
 == Graph Model Selection & Data Description
-We will use a weighted, directed graph model where:
-- Nodes represent users, websites, posts, search terms, and subreddits (for Reddit data).
-- Edges represent relationships such as who posted what, where a post was made, and what search terms were used during scraping.
+I will use a weighted, directed graph model where:
+- Nodes represent users, comments, search terms (coin name), and subreddits.
+- Edges represent relationships such as which user posted a comment, on which subreddit a comment was made, what search term was used during scraping of a comment and which comment is a subcomment of another one.
 
-#let nodes = ("Users", "Websites", "Post", "Search Term", "Subreddit")
-#let edges = ((0, 2), (1, 2), (3, 2), (4,2),)
+#let nodes = ("comment", "user", "search term", "subreddit")
+#let edges = ((1,0), (0,0), (2,0), (3,0),)
 #let positions = (
-  (0mm, 10mm), // "Users"
-  (0mm, 0mm), // "Websites"
-  (25mm, 5mm), // "Post"
-  (50mm, 10mm), // "Search Term"
-  (50mm, 0mm), // "Subreddit"
+  (25mm, 15mm), // "Comment"
+  (50mm, 00mm), // "Users"
+  (25mm, 00mm), // "Search Term"
+  (00mm, 00mm), // "Subreddit"
 )
 #draw_graph(nodes, edges, positions)
 
-Each "Post" node will also contain a vector representing the word count for each term used in the post.
+The idea would be to also extract keywords from a comment (e.g. top 10 TF-IDF words) and encode them into word vectors or add them to the graph. The coin graphs would therefore have connections through identical users/subreddits and keywords.
 
 = Machine Learning Model
 == Model Selection
 
 === Graph-based Model
-We will implement a Graph Attention Network (GAT) based on the model proposed by Veličković et al. (2017) @velickovic_graph_2018. The node features will be derived from the relative occurrence of words per cryptocurrency. 
+I will implement a Graph Attention Network (GAT) based on the model proposed by Veličković et al. (2017) @velickovic_graph_2018. The node features will be derived from the relative occurrence of words per cryptocurrency. 
 
 === Traditional ML Model
-As a comparison, we will implement a gradient boosting model. The data for this model will be encoded in a tabular format, where the features will include the same word counts and associated metadata from the scraped posts.
+As a comparison, I will implement a gradient boosting model. The data for this model will be encoded in a tabular format, where the features will include the same word counts and associated metadata from the scraped posts.
 
 === Baseline Model
-We will use a Naive Bayes classifier as a baseline model. This model will detect which words are most likely to indicate a fraudulent scheme, serving as a simple but informative point of reference.
+I will use a Naive Bayes classifier as a baseline model. This model will detect which words are most likely to indicate a fraudulent scheme, serving as a simple but informative point of reference.
 
 == Training Process (e.g. cluster or local)
-Whenever possible, we will use local GPUs for model training. If needed, we will request additional GPU resources from i4DS or use cloud services like Lambda Labs.
+Whenever possible, I will use local GPUs for model training. If needed, I will request additional GPU resources from i4DS or use cloud services like Lambda Labs.
 
 == Hyperparameter Tuning Approach
-Due to the complexity of the models, we will prioritize random search for hyperparameter tuning. Random search is often more efficient than grid search and can explore a broader range of hyperparameter combinations, making it preferable in this case. Bayesian optimization could also be considered for more computationally intensive models if resources allow.
+Due to the complexity of the models, I will prioritize random search for hyperparameter tuning. Random search is often more efficient than grid search and can explore a broader range of hyperparameter combinations, making it preferable in this case. Bayesian optimization could also be considered for more computationally intensive models if resources allow.
 
 == Data Split
 The data will be split at the cryptocurrency level to ensure that no information leaks between the training and test sets.
@@ -122,20 +125,20 @@ The data will be split at the cryptocurrency level to ensure that no information
 #pagebreak()
 = Evaluation Metrics
 == Performance Metrics
-This is a classification task, so we will evaluate models using the following metrics:
+This is a classification task, so I will evaluate models using the following metrics:
 - *Accuracy*: This measures overall correctness but may not be the best metric due to class imbalance (few fraudulent coins vs. many non-fraudulent coins).
 - *Precision*: The percentage of true positive predictions out of all positive predictions. This is crucial for minimizing false alarms.
-- *Recall*: The percentage of true positive predictions out of all actual positive cases. Recall is important to ensure that we do not miss fraudulent coins.
+- *Recall*: The percentage of true positive predictions out of all actual positive cases. Recall is important to ensure that I do not miss fraudulent coins.
 - *F1-score*: The harmonic mean of precision and recall. This provides a balanced measure, especially useful for imbalanced datasets.
 
 All metrics will be reported in their macro-averaged form to account for class imbalance.
 
 == Cross-validation Strategy
-The cross-validation strategy will depend on the computational cost of training and the amount of cryptocurrency data available. Ideally, we would use k-fold cross-validation (likely k=5 or 10).
+The cross-validation strategy will depend on the computational cost of training and the amount of cryptocurrency data available. Ideally, I would use k-fold cross-validation (likely k=5 or 10).
 
 == Model Comparison
-We will compare the models using the above metrics, with particular attention to:
-- Graph-based models vs. Traditional ML or DL models.
+I will compare the models using the above metrics, with particular attention to:
+- GAT vs. Gradient Boosting Model
 - All models vs. the baseline model.
 
 = References and Resources
